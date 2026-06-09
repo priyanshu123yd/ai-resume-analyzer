@@ -3,3 +3,10 @@
 __pycache__/
 *.pyc
 *.pdf
+et1_project.py
+main.py
+simple_app.py
+test.py
+test_gemini.py
+test_new_gemini.py
+users.csv
