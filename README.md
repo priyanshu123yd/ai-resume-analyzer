@@ -31,3 +31,11 @@ uvicorn resume_analyzer:app --reload
 Open:
 
 http://127.0.0.1:8000/docs
+
+## Home Page
+
+![Home Page](screenshots/home-page.png)
+
+## Resume Analysis
+
+![Resume Analysis](screenshots/analyze.png)
