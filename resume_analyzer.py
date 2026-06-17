@@ -66,6 +66,7 @@ async def upload_resume(file: UploadFile = File(...)):
         print("Characters extracted:", len(text))
 
         # Gemini Prompt
+        # Gemini Prompt
         prompt = f"""
         Analyze this resume and return ONLY valid JSON.
 
@@ -77,7 +78,6 @@ async def upload_resume(file: UploadFile = File(...)):
           "certifications_count": 0,
           "has_experience": false,
           "strengths": [],
-          "weaknesses": [],
           "suggestions": []
         }}
 
@@ -86,6 +86,8 @@ async def upload_resume(file: UploadFile = File(...)):
         - No markdown
         - No explanations
         - No code blocks
+        - Count internships as experience
+        - Extract technical skills only
 
         Resume:
 
@@ -120,6 +122,123 @@ async def upload_resume(file: UploadFile = File(...)):
         projects = parsed_json.get("projects_count", 0)
         certifications = parsed_json.get("certifications_count", 0)
         has_experience = parsed_json.get("has_experience", False)
+
+        weaknesses = []
+
+        if not has_experience:
+            weaknesses.append(
+                "No internship or professional experience found."
+            )
+
+        if projects < 3:
+            weaknesses.append(
+                "Resume contains fewer than 3 projects."
+            )
+
+        if certifications < 2:
+            weaknesses.append(
+                "Limited certifications."
+            )
+
+        if len(skills) < 8:
+            weaknesses.append(
+                "Skills section could be expanded."
+            )
+
+        parsed_json["weaknesses"] = weaknesses
+        # ATS Score Calculation
+
+        ats_score = 0
+
+        # Skills (Max 30)
+        ats_score += min(len(skills) * 2, 30)
+
+        # Projects (Max 20)
+        ats_score += min(projects * 7, 20)
+
+        # Experience (Max 25)
+        if has_experience:
+            ats_score += 25
+
+        # Certifications (Max 10)
+        ats_score += min(certifications * 3, 10)
+
+        # Resume Structure (Fixed)
+        ats_score += 15
+
+        ats_score = min(ats_score, 100)
+
+        parsed_json["ats_score"] = ats_score
+
+        print("ATS Score:", ats_score)
+
+        # Role Match Analysis
+
+        skills_lower = [skill.lower() for skill in skills]
+
+        # Data Analyst
+
+        data_analyst_keywords = [
+            "python",
+            "sql",
+            "mysql",
+            "powerbi",
+            "excel"
+        ]
+
+        data_analyst_match = sum(
+            1 for skill in data_analyst_keywords
+            if skill in skills_lower
+        )
+
+        data_analyst_match = int(
+            (data_analyst_match / len(data_analyst_keywords)) * 100
+        )
+
+        # Python Developer
+
+        python_dev_keywords = [
+            "python",
+            "javascript",
+            "html",
+            "css",
+            "git",
+            "mysql"
+        ]
+
+        python_dev_match = sum(
+            1 for skill in python_dev_keywords
+            if skill in skills_lower
+        )
+
+        python_dev_match = int(
+            (python_dev_match / len(python_dev_keywords)) * 100
+        )
+
+        # AI Engineer
+
+        ai_keywords = [
+            "python",
+            "machine learning",
+            "deep learning",
+            "tensorflow",
+            "pandas"
+        ]
+
+        ai_match = sum(
+            1 for skill in ai_keywords
+            if skill in skills_lower
+        )
+
+        ai_match = int(
+            (ai_match / len(ai_keywords)) * 100
+        )
+
+        parsed_json["role_match"] = {
+            "data_analyst": data_analyst_match,
+            "python_developer": python_dev_match,
+            "ai_engineer": ai_match
+        }
 
         # -----------------------------------
         # Python Resume Scoring Engine
