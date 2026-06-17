@@ -34,38 +34,52 @@ button.addEventListener("click", async function () {
             return;
         }
 
-        resultDiv.innerHTML =
-            "<h2>Resume Score: " + data.resume_score + "</h2>" +
-            "<p><strong>Level:</strong> " + data.resume_level + "</p>" +
+        resultDiv.innerHTML = `
 
-            "<h3>Skills</h3>" +
-            "<ul>" +
-            (data.skills || []).map(skill =>
-                "<li>" + skill + "</li>"
-            ).join("") +
-            "</ul>" +
+        <div class="score-card">
+             <h2>Resume Score: ${data.resume_score}</h2>
+            <p><strong>Level:</strong> ${data.resume_level}</p>
+        </div>
 
-            "<h3>Strengths</h3>" +
-            "<ul>" +
-            (data.strengths || []).map(item =>
-                "<li>" + item + "</li>"
-            ).join("") +
-            "</ul>" +
+        <div class="section">
+            <h3>Skills</h3>
 
-            "<h3>Weaknesses</h3>" +
-            "<ul>" +
-            (data.weaknesses || []).map(item =>
-                "<li>" + item + "</li>"
-            ).join("") +
-            "</ul>" +
+             <div class="skills-container">
+                ${(data.skills || []).map(skill =>
+                `<span class="skill-badge">${skill}</span>`
+                ).join("")}
+             </div>
 
-            "<h3>Suggestions</h3>" +
-            "<ul>" +
-            (data.suggestions || []).map(item =>
-                "<li>" + item + "</li>"
-            ).join("") +
-            "</ul>";
+        </div>
 
+        <div class="section">
+            <h3>Strengths</h3>
+            <ul>
+                ${(data.strengths || []).map(item =>
+                 `<li>${item}</li>`
+                 ).join("")}
+            </ul>
+        </div>
+
+        <div class="section">
+             <h3>Weaknesses</h3>
+             <ul>
+                  ${(data.weaknesses || []).map(item =>
+                    `<li>${item}</li>`
+                   ).join("")}
+             </ul>
+        </div>
+
+        <div class="section">
+             <h3>Suggestions</h3>
+             <ul>
+                ${(data.suggestions || []).map(item =>
+                `<li>${item}</li>`
+                 ).join("")}
+             </ul>
+        </div>
+
+        `;
     } catch (error) {
 
         console.error(error);
