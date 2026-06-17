@@ -12,7 +12,7 @@ A FastAPI-based Resume Analyzer powered by Google Gemini.
 * Automatic technical skill extraction
 * Resume Score calculation (0–100)
 * ATS Score calculation
-* Score Breakdown Analysis
+* Score Breakdown Analysis 
 * Resume Level Classification (Excellent, Good, Average, Needs Improvement)
 * Strength Detection
 * Weakness Detection
