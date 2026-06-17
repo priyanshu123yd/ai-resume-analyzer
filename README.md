@@ -4,17 +4,30 @@ A FastAPI-based Resume Analyzer powered by Google Gemini.
 
 ## Features
 
-- Upload PDF resumes
-- Extract text using pypdf
-- Analyze resume using Gemini AI
-- Generate:
-  - Resume Score
-  - Score Breakdown
-  - Skills
-  - Strengths
-  - Weaknesses
-  - Suggestions
-  - Resume Level
+## Features
+
+* Upload PDF resumes
+* Extract resume text using PyPDF
+* Analyze resumes using Google Gemini AI
+* Automatic technical skill extraction
+* Resume Score calculation (0–100)
+* ATS Score calculation
+* Score Breakdown Analysis
+* Resume Level Classification (Excellent, Good, Average, Needs Improvement)
+* Strength Detection
+* Weakness Detection
+* Personalized Improvement Suggestions
+* Role Match Analysis:
+
+  * Data Analyst Match
+  * Python Developer Match
+  * AI Engineer Match
+* Dynamic Skill Badges UI
+* FastAPI REST API Backend
+* Responsive Frontend using HTML, CSS, and JavaScript
+* Error Handling for invalid or scanned PDFs
+* Git & GitHub Version Control
+
 
 ## Installation
 
