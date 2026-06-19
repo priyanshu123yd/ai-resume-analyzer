@@ -14,7 +14,13 @@ button.addEventListener("click", async function () {
         }
 
         const formData = new FormData();
+
         formData.append("file", file);
+
+        formData.append(
+            "job_description",
+            document.getElementById("jobDescription").value
+        );
 
         resultDiv.innerHTML = "<p>Analyzing resume...</p>";
 
@@ -47,6 +53,7 @@ button.addEventListener("click", async function () {
             cardColor = "#ea580c"; // Orange
         }
 
+        console.log("Job Match Data:", data.job_match);
         resultDiv.innerHTML = `
 
         <div class="score-card" style="background-color:${cardColor}; color:white;">
@@ -90,6 +97,46 @@ button.addEventListener("click", async function () {
             </div>
 
         </div>
+
+        <div class="section">
+
+    <h3>Job Description Match</h3>
+
+    <div class="breakdown-card" style="background:#fff8dc;">
+
+        <p>
+            <strong>Match Score:</strong>
+            ${data.job_match.score}%
+        </p>
+
+        <h4>Matched Skills</h4>
+
+        <div class="skills-container">
+
+            ${(data.job_match.matched_skills || []).map(skill =>
+                `<span class="skill-badge">${skill}</span>`
+            ).join("")}
+
+        </div>
+
+        <h4 style="margin-top:15px;">
+            Missing Skills
+        </h4>
+
+        <div class="skills-container">
+
+            ${(data.job_match.missing_skills || []).map(skill =>
+                `<span class="skill-badge"
+                style="background:#dc2626;">
+                ${skill}
+                </span>`
+            ).join("")}
+
+        </div>
+
+    </div>
+
+</div>
 
 
         <div class="section">

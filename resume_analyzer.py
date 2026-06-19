@@ -1,4 +1,10 @@
-from fastapi import FastAPI, UploadFile, File, Request
+from fastapi import (
+    FastAPI,
+    UploadFile,
+    File,
+    Request,
+    Form
+)
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -37,7 +43,10 @@ async def home(request: Request):
 
 # Resume Upload API
 @app.post("/upload-resume")
-async def upload_resume(file: UploadFile = File(...)):
+async def upload_resume(
+    file: UploadFile = File(...),
+    job_description: str = Form("")
+):
     try:
 
         # Save uploaded PDF temporarily
@@ -238,6 +247,76 @@ async def upload_resume(file: UploadFile = File(...)):
             "data_analyst": data_analyst_match,
             "python_developer": python_dev_match,
             "ai_engineer": ai_match
+        }
+
+        # -----------------------------------
+        # Job Description Match Analysis
+        # -----------------------------------
+
+        job_match_score = 0
+        matched_skills = []
+        missing_skills = []
+
+        if job_description.strip():
+
+            jd_lower = job_description.lower()
+
+            for skill in skills:
+
+                if skill.lower() in jd_lower:
+                    matched_skills.append(skill)
+
+            common_keywords = [
+                "python",
+                "sql",
+                "mysql",
+                "power bi",
+                "excel",
+                "tableau",
+                "statistics",
+                "data analysis",
+                "business analysis",
+                "machine learning",
+                "deep learning",
+                "tensorflow",
+                "pandas",
+                "numpy",
+                "html",
+                "css",
+                "javascript",
+                "git",
+                "github",
+                "fastapi",
+                "api",
+                "dashboard",
+                "data visualization"
+            ]
+
+            for keyword in common_keywords:
+
+                if keyword in jd_lower:
+
+                    found = False
+
+                    for skill in skills:
+                        if keyword == skill.lower():
+                            found = True
+                            break
+
+                    if not found:
+                        missing_skills.append(keyword)
+
+            total_keywords = len(matched_skills) + len(missing_skills)
+
+            if total_keywords > 0:
+                job_match_score = int(
+                    (len(matched_skills) / total_keywords) * 100
+                )
+
+        parsed_json["job_match"] = {
+            "score": job_match_score,
+            "matched_skills": matched_skills,
+            "missing_skills": missing_skills
         }
 
         # -----------------------------------
