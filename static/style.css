@@ -123,3 +123,16 @@ li {
     font-size: 14px;
     box-sizing: border-box;
 }
+
+#improveBtn {
+    background-color: #16a34a;
+    margin-top: 10px;
+}
+
+#improveBtn:hover {
+    background-color: #15803d;
+}
+
+#improvedResume {
+    margin-top: 25px;
+}

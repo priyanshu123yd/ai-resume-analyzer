@@ -1,6 +1,8 @@
 const button = document.getElementById("analyzeBtn");
 const fileInput = document.getElementById("resumeFile");
 const resultDiv = document.getElementById("result");
+const improveBtn = document.getElementById("improveBtn");
+const improvedResumeDiv = document.getElementById("improvedResume");
 
 button.addEventListener("click", async function () {
 
@@ -185,4 +187,63 @@ button.addEventListener("click", async function () {
         resultDiv.innerHTML =
             "<h3>Error</h3><p>" + error.message + "</p>";
     }
+});
+improveBtn.addEventListener("click", async function () {
+
+    try {
+
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert("Please select a resume first!");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        improvedResumeDiv.innerHTML =
+            "<p>Improving resume...</p>";
+
+        const response = await fetch(
+            "/improve-resume",
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        const data = await response.json();
+
+        if (data.error) {
+
+            improvedResumeDiv.innerHTML =
+                `<p>${data.error}</p>`;
+
+            return;
+        }
+
+        improvedResumeDiv.innerHTML = `
+            <div class="section">
+                <h3>AI Improved Resume</h3>
+
+                <div class="breakdown-card">
+
+                    <pre style="
+                        white-space: pre-wrap;
+                        font-family: Arial;
+                    ">
+${data.improved_resume}
+                    </pre>
+
+                </div>
+            </div>
+        `;
+
+    } catch (error) {
+
+        improvedResumeDiv.innerHTML =
+            `<p>${error.message}</p>`;
+    }
+
 });
