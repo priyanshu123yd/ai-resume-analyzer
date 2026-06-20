@@ -1,54 +1,102 @@
 # AI Resume Analyzer
 
-A FastAPI-based Resume Analyzer powered by Google Gemini.
+An AI-powered Resume Analyzer built with FastAPI and Google Gemini AI. Upload a PDF resume and receive detailed ATS-style feedback, resume scoring, role matching, job description matching, and AI-generated resume improvements.
 
 ## Features
 
-## Features
+### Resume Analysis
 
 * Upload PDF resumes
-* Extract resume text using PyPDF
+* Extract text using pypdf
 * Analyze resumes using Google Gemini AI
-* Automatic technical skill extraction
-* Resume Score calculation (0–100)
-* ATS Score calculation
-* Score Breakdown Analysis 
-* Resume Level Classification (Excellent, Good, Average, Needs Improvement)
-* Strength Detection
-* Weakness Detection
-* Personalized Improvement Suggestions
-* Role Match Analysis:
+* Technical skills extraction
+* Strengths identification
+* Weakness detection
+* Resume improvement suggestions
 
-  * Data Analyst Match
-  * Python Developer Match
-  * AI Engineer Match
-* Dynamic Skill Badges UI
-* FastAPI REST API Backend
-* Responsive Frontend using HTML, CSS, and JavaScript
-* Error Handling for invalid or scanned PDFs
-* Git & GitHub Version Control
+### Scoring System
 
+* Resume Score (0–100)
+* ATS Score Calculation
+* Detailed Score Breakdown
 
-## Installation
+  * Skills
+  * Projects
+  * Experience
+  * Certifications
+  * Resume Structure
+* Resume Level Classification
 
-pip install -r requirements.txt
+  * Excellent
+  * Good
+  * Average
+  * Needs Improvement
 
-Create a .env file:
+### Role Match Analysis
 
-GEMINI_API_KEY=YOUR_API_KEY
+* Data Analyst Match %
+* Python Developer Match %
+* AI Engineer Match %
 
-Run:
+### Job Description Matching
 
-uvicorn resume_analyzer:app --reload
+* Match Score %
+* Matched Skills Detection
+* Missing Skills Identification
+* ATS-style keyword gap analysis
 
-Open:
+### AI Resume Improvement
 
-http://127.0.0.1:8000/docs
+* AI-generated resume enhancement
+* Improved wording and action verbs
+* ATS-friendly resume recommendations
 
-## Home Page
+## Tech Stack
 
-![Home Page](screenshots/home-page.png)
+### Backend
 
-## Resume Analysis
+* FastAPI
+* Python
+* Google Gemini AI
+
+### Frontend
+
+* HTML
+* CSS
+* JavaScript
+
+### Libraries
+
+* pypdf
+* python-dotenv
+
+## Screenshots
+
+### Home Page
+
+![Home Page](screenshots/home.png)
+
+### Resume Analysis
 
 ![Resume Analysis](screenshots/analyze.png)
+
+### Job Description Match
+
+![Job Match](screenshots/job_match.png)
+
+### AI Resume Improvement
+
+![Improved Resume](screenshots/improved_resume.png)
+
+## Future Enhancements
+
+* Download Improved Resume as PDF
+* Resume Section Analysis
+* Resume Keyword Gap Report
+* Multiple Resume Comparison
+* Resume Templates
+* Cloud Deployment
+
+## Author
+
+Priyanshu Yadav
