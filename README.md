@@ -1,30 +1,27 @@
 # AI Resume Analyzer
 
-An AI-powered Resume Analyzer built with FastAPI and Google Gemini AI. Upload a PDF resume and receive detailed ATS-style feedback, resume scoring, role matching, job description matching, and AI-generated resume improvements.
+An AI-powered Resume Analyzer built using FastAPI, Google Gemini AI, and JavaScript. The application analyzes resumes, generates ATS-style feedback, evaluates role suitability, compares resumes against job descriptions, and provides AI-powered resume improvements.
+
+## Live Demo
+
+https://ai-resume-analyzer-wnpn.onrender.com
 
 ## Features
 
-### Resume Analysis
+### AI Resume Analysis
 
 * Upload PDF resumes
-* Extract text using pypdf
+* Extract resume content using PyPDF
 * Analyze resumes using Google Gemini AI
 * Technical skills extraction
-* Strengths identification
+* Strength identification
 * Weakness detection
-* Resume improvement suggestions
+* AI-generated improvement suggestions
 
-### Scoring System
+### ATS Scoring System
 
+* ATS Score (0–100)
 * Resume Score (0–100)
-* ATS Score Calculation
-* Detailed Score Breakdown
-
-  * Skills
-  * Projects
-  * Experience
-  * Certifications
-  * Resume Structure
 * Resume Level Classification
 
   * Excellent
@@ -32,24 +29,49 @@ An AI-powered Resume Analyzer built with FastAPI and Google Gemini AI. Upload a 
   * Average
   * Needs Improvement
 
-### Role Match Analysis
+### Detailed Score Breakdown
 
-* Data Analyst Match %
-* Python Developer Match %
-* AI Engineer Match %
+* Skills Score
+* Projects Score
+* Experience Score
+* Certifications Score
+* Resume Structure Score
+
+### Role Matching
+
+Evaluate suitability for:
+
+* Data Analyst
+* Python Developer
+* AI Engineer
 
 ### Job Description Matching
 
-* Match Score %
+* Job Match Score
 * Matched Skills Detection
-* Missing Skills Identification
-* ATS-style keyword gap analysis
+* Missing Skills Analysis
+* ATS Keyword Gap Identification
 
 ### AI Resume Improvement
 
-* AI-generated resume enhancement
-* Improved wording and action verbs
-* ATS-friendly resume recommendations
+* Resume rewriting using Gemini AI
+* Strong action verbs
+* ATS-friendly formatting suggestions
+* Improved project descriptions
+* Better professional summaries
+
+### PDF Export
+
+* Download AI-improved resume as PDF
+
+### Modern User Interface
+
+* Dark Mode / Light Mode
+* ATS Circular Score Gauge
+* Animated Background Effects
+* Floating AI Particles
+* Responsive Design
+* Interactive Progress Bars
 
 ## Tech Stack
 
@@ -57,7 +79,7 @@ An AI-powered Resume Analyzer built with FastAPI and Google Gemini AI. Upload a 
 
 * FastAPI
 * Python
-* Google Gemini AI
+* Google Gemini API
 
 ### Frontend
 
@@ -67,8 +89,25 @@ An AI-powered Resume Analyzer built with FastAPI and Google Gemini AI. Upload a 
 
 ### Libraries
 
-* pypdf
-* python-dotenv
+* PyPDF
+* ReportLab
+* Python Dotenv
+* Python Multipart
+* Jinja2
+
+## System Architecture
+
+Frontend (HTML/CSS/JavaScript)
+↓
+FastAPI Backend
+↓
+PDF Text Extraction
+↓
+Google Gemini AI
+↓
+JSON Response
+↓
+Interactive Dashboard
 
 ## Screenshots
 
@@ -80,7 +119,7 @@ An AI-powered Resume Analyzer built with FastAPI and Google Gemini AI. Upload a 
 
 ![Resume Analysis](screenshots/analyze.png)
 
-### Job Description Match
+### Job Description Matching
 
 ![Job Match](screenshots/job_match.png)
 
@@ -88,15 +127,30 @@ An AI-powered Resume Analyzer built with FastAPI and Google Gemini AI. Upload a 
 
 ![Improved Resume](screenshots/improved_resume.png)
 
+## API Endpoints
+
+| Endpoint                  | Method | Description                  |
+| ------------------------- | ------ | ---------------------------- |
+| /upload-resume            | POST   | Analyze resume               |
+| /improve-resume           | POST   | Generate improved resume     |
+| /download-improved-resume | POST   | Download improved resume PDF |
+
 ## Future Enhancements
 
-* Download Improved Resume as PDF
-* Resume Section Analysis
-* Resume Keyword Gap Report
+* Resume Section-wise Analysis
+* Resume Template Suggestions
 * Multiple Resume Comparison
-* Resume Templates
-* Cloud Deployment
+* Interview Question Generation
+* AI Career Guidance
+* Resume Version History
 
 ## Author
 
 Priyanshu Yadav
+
+GitHub:
+https://github.com/priyanshu123yd
+
+Live Application:
+https://ai-resume-analyzer-wnpn.onrender.com
+
