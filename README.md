@@ -109,23 +109,28 @@ JSON Response
 ↓
 Interactive Dashboard
 
-## Screenshots
+# Screenshots
 
-### Home Page
+### Home Page (Light Mode)
 
-![Home Page](screenshots/home.png)
+![Home Light Mode](screenshots/light_home.png)
 
-### Resume Analysis
+### Home Page (Dark Mode)
+
+![Home Dark Mode](screenshots/dark_home.png)
+
+### Resume Analysis Dashboard
 
 ![Resume Analysis](screenshots/analyze.png)
 
-### Job Description Matching
+### Skills Extraction
 
-![Job Match](screenshots/job_match.png)
+![Skills](screenshots/skills.png)
 
 ### AI Resume Improvement
 
 ![Improved Resume](screenshots/improved_resume.png)
+
 
 ## API Endpoints
 
