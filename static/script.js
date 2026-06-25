@@ -3,6 +3,13 @@ const fileInput = document.getElementById("resumeFile");
 const resultDiv = document.getElementById("result");
 const improveBtn = document.getElementById("improveBtn");
 const improvedResumeDiv = document.getElementById("improvedResume");
+const downloadBtn =
+document.getElementById("downloadBtn");
+const loadingBox =
+    document.getElementById("loadingBox");
+
+const loadingText =
+    document.getElementById("loadingText");
 
 button.addEventListener("click", async function () {
 
@@ -24,7 +31,30 @@ button.addEventListener("click", async function () {
             document.getElementById("jobDescription").value
         );
 
-        resultDiv.innerHTML = "<p>Analyzing resume...</p>";
+        loadingBox.style.display = "block";
+
+        resultDiv.innerHTML = "";
+
+        const loadingMessages = [
+            "Extracting resume content...",
+            "Analyzing skills...",
+            "Calculating ATS score...",
+            "Matching job description...",
+            "Generating recommendations..."
+        ];
+
+        let messageIndex = 0;
+
+        const loadingInterval = setInterval(() => {
+
+            loadingText.textContent =
+                 loadingMessages[
+                     messageIndex % loadingMessages.length
+                 ];
+
+            messageIndex++;
+
+        }, 1500);
 
         const response = await fetch("/upload-resume", {
             method: "POST",
@@ -33,15 +63,58 @@ button.addEventListener("click", async function () {
 
         const data = await response.json();
 
+        clearInterval(loadingInterval);
+
+        loadingBox.style.display = "none";
+
 
         console.log("API Response:", data);
 
         // Handle backend errors
         if (data.error) {
-            resultDiv.innerHTML =
-                "<h3>Error</h3><p>" + data.error + "</p>";
-            return;
-        }
+
+    let errorMessage = data.error;
+
+    if (
+        errorMessage.includes("503") ||
+        errorMessage.includes("UNAVAILABLE")
+    ) {
+
+        resultDiv.innerHTML = `
+        <div class="error-card">
+
+            <div class="error-icon">⚡</div>
+
+            <h2>AI is thinking</h2>
+
+            <p>
+                Our AI is currently handling a large number of requests.
+            </p>
+
+            <p>
+                Please wait a few moments and try again.
+            </p>
+
+        </div>
+        `;
+
+    } else {
+
+        resultDiv.innerHTML = `
+        <div class="error-card">
+
+            <div class="error-icon">⚠️</div>
+
+            <h2>Something Went Wrong</h2>
+
+            <p>${errorMessage}</p>
+
+        </div>
+        `;
+    }
+
+    return;
+}
 
         let cardColor = "#dc2626"; // Red
 
@@ -55,31 +128,170 @@ button.addEventListener("click", async function () {
             cardColor = "#ea580c"; // Orange
         }
 
+        let atsVerdict = "";
+let verdictColor = "";
+
+if (data.ats_score >= 85) {
+
+    atsVerdict = "🟢 ATS Friendly";
+    verdictColor = "#ffffff22";
+
+}
+else if (data.ats_score >= 70) {
+
+    atsVerdict = "🟡 Needs Optimization";
+    verdictColor = "#eab308";
+
+}
+else {
+
+    atsVerdict = "🔴 ATS Risk";
+    verdictColor = "#dc2626";
+
+}
+
         console.log("Job Match Data:", data.job_match);
         resultDiv.innerHTML = `
 
         <div class="score-card" style="background-color:${cardColor}; color:white;">
-             <h2>${data.resume_score}/100</h2>
-             <p><strong>${data.resume_level}</strong></p>
-             <p><strong>ATS Score:</strong> ${data.ats_score}%</p>
-        </div>
+        <div
+    class="ats-verdict"
+    style="background:${verdictColor};"
+>
+    ${atsVerdict}
+</div>
+    <div class="stats-container">
+
+    <div class="stat-card">
+        <span class="stat-icon">⚒</span>
+        <span class="stat-number">
+            ${(data.skills || []).length}
+        </span>
+        <span class="stat-label">
+            Skills
+        </span>
+    </div>
+
+    <div class="stat-card">
+        <span class="stat-icon">📁</span>
+        <span class="stat-number">
+            ${data.projects_count}
+        </span>
+        <span class="stat-label">
+            Projects
+        </span>
+    </div>
+
+    <div class="stat-card">
+        <span class="stat-icon">🏆</span>
+        <span class="stat-number">
+            ${data.certifications_count}
+        </span>
+        <span class="stat-label">
+            Certifications
+        </span>
+    </div>
+
+    <div class="stat-card">
+        <span class="stat-icon">💼</span>
+        <span class="stat-number">
+            ${data.has_experience ? "Yes" : "No"}
+        </span>
+        <span class="stat-label">
+            Experience
+        </span>
+    </div>
+
+</div>
+
+    <div class="gauge">
+
+        <svg width="180" height="180">
+
+            <circle
+                class="gauge-bg"
+                cx="90"
+                cy="90"
+                r="70">
+            </circle>
+
+            <circle
+                class="gauge-progress"
+                cx="90"
+                cy="90"
+                r="70">
+            </circle>
+
+        </svg>
+
+        <div class="gauge-text">
+    ${data.ats_score}%
+    <span class="gauge-label">
+        ATS SCORE
+    </span>
+    </div>
+
+    </div>
+
+    <div class="resume-score-section">
+
+    <p class="resume-score-label">
+        Overall Resume Score
+    </p>
+
+    <h2 class="resume-score-number">
+        ${data.resume_score}/100
+    </h2>
+
+    <p class="resume-level">
+        ${data.resume_level}
+    </p>
+
+</div>
+
+</div>
 
         <div class="section">
-            <h3>Score Breakdown</h3>
+            <h3>📊 Score Breakdown</h3>
 
             <div class="breakdown-card">
 
-                <p>Skills: ${data.score_breakdown.skills}/20</p>
+    <p><strong>Skills</strong> (${data.score_breakdown.skills}/20)</p>
+    <div class="progress">
+        <div class="progress-fill"
+             style="width:${(data.score_breakdown.skills/20)*100}%">
+        </div>
+    </div>
 
-                <p>Projects: ${data.score_breakdown.projects}/25</p>
+    <p><strong>Projects</strong> (${data.score_breakdown.projects}/25)</p>
+    <div class="progress">
+        <div class="progress-fill"
+             style="width:${(data.score_breakdown.projects/25)*100}%">
+        </div>
+    </div>
 
-                <p>Experience: ${data.score_breakdown.experience}/25</p>
+    <p><strong>Experience</strong> (${data.score_breakdown.experience}/25)</p>
+    <div class="progress">
+        <div class="progress-fill"
+             style="width:${(data.score_breakdown.experience/25)*100}%">
+        </div>
+    </div>
 
-                <p>Certifications: ${data.score_breakdown.certifications}/10</p>
+    <p><strong>Certifications</strong> (${data.score_breakdown.certifications}/10)</p>
+    <div class="progress">
+        <div class="progress-fill"
+             style="width:${(data.score_breakdown.certifications/10)*100}%">
+        </div>
+    </div>
 
-                <p>Resume Structure: ${data.score_breakdown.resume_structure}/20</p>
+    <p><strong>Resume Structure</strong> (${data.score_breakdown.resume_structure}/20)</p>
+    <div class="progress">
+        <div class="progress-fill"
+             style="width:${(data.score_breakdown.resume_structure/20)*100}%">
+        </div>
+    </div>
 
-             </div>
+</div>
         </div>
         <div class="section">
 
@@ -102,7 +314,7 @@ button.addEventListener("click", async function () {
 
         <div class="section">
 
-    <h3>Job Description Match</h3>
+    <h3>🎯 Job Description Match</h3>
 
     <div class="breakdown-card" style="background:#fff8dc;">
 
@@ -142,7 +354,7 @@ button.addEventListener("click", async function () {
 
 
         <div class="section">
-            <h3>Skills</h3>
+            <h3>🛠 Skills</h3>
 
              <div class="skills-container">
                 ${(data.skills || []).map(skill =>
@@ -153,7 +365,7 @@ button.addEventListener("click", async function () {
         </div>
 
         <div class="section">
-            <h3>Strengths</h3>
+            <h3>💪 Strengths</h3>
             <ul>
                 ${(data.strengths || []).map(item =>
                  `<li>${item}</li>`
@@ -162,7 +374,7 @@ button.addEventListener("click", async function () {
         </div>
 
         <div class="section">
-             <h3>Weaknesses</h3>
+             <h3>⚠ Weaknesses</h3>
              <ul>
                   ${(data.weaknesses || []).map(item =>
                     `<li>${item}</li>`
@@ -171,7 +383,7 @@ button.addEventListener("click", async function () {
         </div>
 
         <div class="section">
-             <h3>Suggestions</h3>
+             <h3>💡 Suggestions</h3>
              <ul>
                 ${(data.suggestions || []).map(item =>
                 `<li>${item}</li>`
@@ -180,6 +392,23 @@ button.addEventListener("click", async function () {
         </div>
 
         `;
+        setTimeout(() => {
+
+    const circle =
+        document.querySelector(".gauge-progress");
+
+    if (!circle) return;
+
+    const score =
+        data.ats_score;
+
+    const offset =
+        440 - (440 * score / 100);
+
+    circle.style.strokeDashoffset =
+        offset;
+
+}, 100);
     } catch (error) {
 
         console.error(error);
@@ -215,6 +444,7 @@ improveBtn.addEventListener("click", async function () {
 
         const data = await response.json();
 
+
         if (data.error) {
 
             improvedResumeDiv.innerHTML =
@@ -225,7 +455,7 @@ improveBtn.addEventListener("click", async function () {
 
         improvedResumeDiv.innerHTML = `
             <div class="section">
-                <h3>AI Improved Resume</h3>
+                <h3>🤖 AI Improved Resume</h3>
 
                 <div class="breakdown-card">
 
@@ -247,3 +477,123 @@ ${data.improved_resume}
     }
 
 });
+
+downloadBtn.addEventListener(
+    "click",
+    async function () {
+
+        const file = fileInput.files[0];
+
+        if (!file) {
+
+            alert("Please upload a resume.");
+
+            return;
+        }
+
+        const formData = new FormData();
+
+        formData.append("file", file);
+
+        const response = await fetch(
+            "/download-improved-resume",
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        const blob =
+            await response.blob();
+
+        const url =
+            window.URL.createObjectURL(blob);
+
+        const a =
+            document.createElement("a");
+
+        a.href = url;
+
+        a.download =
+            "Improved_Resume.pdf";
+
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+    }
+);
+
+const themeBtn =
+    document.getElementById("themeToggle");
+
+themeBtn.addEventListener("click", () => {
+
+    document.body.classList.toggle("dark-mode");
+
+    if (
+        document.body.classList.contains(
+            "dark-mode"
+        )
+    ) {
+
+        themeBtn.innerHTML =
+            "☀ Light Mode";
+
+    } else {
+
+        themeBtn.innerHTML =
+            "🌙 Dark Mode";
+    }
+});
+
+const particlesContainer =
+    document.getElementById("particles");
+
+for (let i = 0; i < 30; i++) {
+
+    const particle =
+        document.createElement("div");
+
+    particle.classList.add("particle");
+    const size =
+    3 + Math.random() * 6;
+
+    particle.style.width =
+    size + "px";
+
+    particle.style.height =
+    size + "px";
+
+    particle.style.left =
+        Math.random() * 100 + "%";
+
+    particle.style.animationDuration =
+        (15 + Math.random() * 15) + "s";
+
+    particle.style.animationDelay =
+        Math.random() * 10 + "s";
+
+    const colors = [
+    "#06b6d4",
+    "#7c3aed",
+    "#3b82f6"
+    ];
+
+    particle.style.background =
+    colors[
+        Math.floor(
+            Math.random() * colors.length
+        )
+    ];
+
+    particle.style.boxShadow =
+    `0 0 10px ${particle.style.background},
+     0 0 20px ${particle.style.background}`;
+
+    particle.style.opacity =
+    0.5 + Math.random() * 0.5;
+
+    particlesContainer.appendChild(
+        particle
+    );
+}

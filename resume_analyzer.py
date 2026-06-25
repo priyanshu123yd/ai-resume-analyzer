@@ -8,6 +8,9 @@ from fastapi import (
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
 
 from pypdf import PdfReader
 from google import genai
@@ -48,6 +51,11 @@ async def upload_resume(
     job_description: str = Form("")
 ):
     try:
+        if file.content_type != "application/pdf":
+            return {
+                "error":
+                    "Only PDF resumes are supported."
+            }
 
         # Save uploaded PDF temporarily
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
@@ -69,6 +77,28 @@ async def upload_resume(
         if not text.strip():
             return {
                 "error": "No text found in PDF. The resume may be scanned or image-based."
+            }
+        resume_keywords = [
+            "skills",
+            "education",
+            "experience",
+            "projects",
+            "certifications",
+            "internship",
+            "technical skills"
+        ]
+
+        found_keywords = 0
+
+        for keyword in resume_keywords:
+
+            if keyword.lower() in text.lower():
+                found_keywords += 1
+
+        if found_keywords < 2:
+            return {
+                "error":
+                    "This does not appear to be a resume. Please upload a valid resume PDF."
             }
 
         print("PDF text extracted successfully")
@@ -106,10 +136,39 @@ async def upload_resume(
         print("Calling Gemini API...")
 
         # Gemini API Call
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt
-        )
+        import time
+
+        response = None
+
+        for attempt in range(3):
+
+            try:
+
+                response = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=prompt
+                )
+
+                break
+
+            except Exception as e:
+
+                if "503" in str(e):
+
+                    print(
+                        f"Retry {attempt + 1}/3..."
+                    )
+
+                    time.sleep(2)
+
+                else:
+                    raise e
+
+        if response is None:
+            return {
+                "error":
+                    "AI service temporarily busy. Please try again in a minute."
+            }
 
         print("Gemini API completed")
 
@@ -381,6 +440,11 @@ async def upload_resume(
 async def improve_resume(file: UploadFile = File(...)):
 
         try:
+            if file.content_type != "application/pdf":
+                return {
+                    "error":
+                        "Only PDF resumes are supported."
+                }
 
             with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
                 temp_file.write(await file.read())
@@ -432,3 +496,84 @@ async def improve_resume(file: UploadFile = File(...)):
             return {
                 "error": str(e)
             }
+
+@app.post("/download-improved-resume")
+async def download_improved_resume(file: UploadFile = File(...)):
+
+    try:
+
+        with tempfile.NamedTemporaryFile(
+                delete=False,
+                suffix=".pdf"
+        ) as temp_file:
+
+            temp_file.write(await file.read())
+            temp_path = temp_file.name
+
+        reader = PdfReader(temp_path)
+
+        text = ""
+
+        for page in reader.pages:
+
+            page_text = page.extract_text()
+
+            if page_text:
+                text += page_text + "\n"
+
+        prompt = f"""
+        You are a professional resume writer.
+
+        Rewrite and improve this resume.
+
+        Rules:
+        - Return ONLY the final improved resume.
+        - Do NOT explain changes.
+        - Do NOT give suggestions.
+        - Do NOT include notes.
+        - Do NOT include headings like "Key Changes Applied".
+        - Do NOT include commentary.
+        - Keep resume format professional.
+        - ATS friendly.
+        - Improve wording and project descriptions.
+        - Use strong action verbs.
+        - Keep information truthful.
+
+        Resume:
+
+        {text}
+        """
+
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+
+        improved_resume = response.text
+
+        pdf_path = "improved_resume.pdf"
+
+        doc = SimpleDocTemplate(pdf_path)
+
+        styles = getSampleStyleSheet()
+
+        content = [
+            Paragraph(
+                improved_resume.replace("\n", "<br/>"),
+                styles["BodyText"]
+            )
+        ]
+
+        doc.build(content)
+
+        return FileResponse(
+            path=pdf_path,
+            filename="Improved_Resume.pdf",
+            media_type="application/pdf"
+        )
+
+    except Exception as e:
+
+        return {
+            "error": str(e)
+        }

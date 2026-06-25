@@ -10,35 +10,85 @@
 </head>
 
 <body>
+    <div id="particles"></div>
 
     <div class="container">
+        <div class="theme-switch">
+
+            <input
+                type="checkbox"
+                id="themeToggle"
+            >
+
+            <label
+                for="themeToggle"
+                class="slider"
+            ></label>
+
+        </div>
 
         <div class="header">
+
             <h1>AI Resume Analyzer</h1>
             <p>Upload your resume and get AI-powered feedback.</p>
         </div>
 
         <div class="upload-section">
 
-            <input type="file" id="resumeFile">
+        <div class="upload-box">
 
-            <textarea
-                id="jobDescription"
-                placeholder="Paste Job Description Here (Optional)"
-            ></textarea>
+            <p style="font-size:18px; margin-bottom:15px;">
+            📄 Upload Resume PDF
+             </p>
 
-            <button id="analyzeBtn">
-                Analyze Resume
-            </button>
+            <input
+                type="file"
+                 id="resumeFile"
+                accept=".pdf,application/pdf"
+            >
 
-            <button id="improveBtn">✨ Improve Resume</button>
         </div>
 
+    <textarea
+        id="jobDescription"
+        placeholder="Paste Job Description Here (Optional)"
+    ></textarea>
+
+    <div class="button-group">
+
+        <button id="analyzeBtn">
+            📊 Analyze Resume
+        </button>
+
+        <button id="improveBtn">
+            ✨ Improve Resume
+        </button>
+
+        <button id="downloadBtn">
+            📥 Download Improved Resume PDF
+        </button>
+
+    </div>
+
+</div>
+        <div id="loadingBox" class="loading-box" style="display:none;">
+
+    <div class="loader"></div>
+
+    <h3>Analyzing Resume...</h3>
+
+    <p id="loadingText">
+        Extracting resume content...
+    </p>
+
+</div>
         <div id="result"></div>
 
         <div id="improvedResume"></div>
 
     </div>
+
+
 
     <script src="/static/script.js"></script>
 
