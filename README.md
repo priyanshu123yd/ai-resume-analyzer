@@ -109,7 +109,7 @@ JSON Response
 ↓
 Interactive Dashboard
 
-# Screenshots
+## Screenshots
 
 ### Home Page (Light Mode)
 
@@ -127,9 +127,14 @@ Interactive Dashboard
 
 ![Skills](screenshots/skills.png)
 
+### Job Description Matching
+
+![Job Match](screenshots/job_match.png)
+
 ### AI Resume Improvement
 
 ![Improved Resume](screenshots/improved_resume.png)
+
 
 
 ## API Endpoints
